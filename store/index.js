@@ -1,5 +1,5 @@
 export const state = () => ({
-  user: {},
+  user: null,
   messages: []
 })
 
@@ -12,7 +12,7 @@ export const mutations = {
     state.user = payload;
   },
   logout (state) {
-    state.user = {};
+    state.user = null;
     state.messages = [];
   },
   SOCKET_newMessage(state, message) {

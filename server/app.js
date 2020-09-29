@@ -16,7 +16,7 @@ io.on('connection', socket => {
     cb({ userId: socket.id })
     // create first Welcome message
     socket.emit('newMessage', m('admin', `Welcome, ${data.name}!`))
-    // remove current user and leave others in chat
+    // remove current user and leave others in chat (and send message to users)
     socket.broadcast.to(data.room)
       .emit('newMessage', m('admin', `${data.name} joined the chat.`))
   })

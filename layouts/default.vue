@@ -2,6 +2,7 @@
   <v-app app dark>
     <v-navigation-drawer
       v-model="drawer"
+      :mobile-break-point="650"
       app
     >
       <v-list subheader>
@@ -40,7 +41,7 @@
       <v-toolbar-title>Chat room - {{ user.room }}</v-toolbar-title>
     </v-toolbar>
     <v-content>
-      <div>
+      <div style="height: 100%">
         <nuxt />
       </div>
     </v-content>

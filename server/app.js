@@ -23,23 +23,48 @@ io.on('connection', socket => {
 
     // create userId => trigger cb on front
     cb({ userId: socket.id })
+
+    io.to(data.room).emit('updateUsers', users.getByRoom(data.room))
     // create first Welcome message
     socket.emit('newMessage', m('admin', `Welcome, ${data.name}!`))
     // remove current user and leave others in chat (and send message to users)
     socket.broadcast.to(data.room)
       .emit('newMessage', m('admin', `${data.name} joined the chat.`))
+
+    socket.on('disconnect', () => {
+      // in case of close tab
+      const user = users.remove(socket.id);
+
+      if (user) {
+        io.to(user.room).emit('updateUsers', users.getByRoom(user.room))
+        io.to(user.room).emit('newMessage', m('admin',`${user.name} left the chat.`))
+      }
+    })
   })
 
   socket.on('createMessage', (data, cb) => {
+    // Check if message emty
     if(!data.text) {
       return cb('Empty input');
     }
-
+    // create new message
     const user = users.get(data.id);
     if (user) {
       io.to(user.room).emit('newMessage', m(user.name, data.text, data.id))
     }
     cb()
+  })
+
+  socket.on('userLeft', (id, cb) => {
+    // remove user from room
+    const user = users.remove(id);
+    if (user) {
+      // update users in room
+      io.to(user.room).emit('updateUsers', users.getByRoom(user.room))
+      // notify other users about participant who left the room
+      io.to(user.room).emit('newMessage', m('admin',`${user.name} left the chat.`))
+    }
+    cb();
   })
 })
 

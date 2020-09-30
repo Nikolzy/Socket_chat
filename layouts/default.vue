@@ -8,15 +8,15 @@
       <v-list subheader>
         <v-subheader>Users chat list</v-subheader>
         <v-list-tile
-          v-for="item in recent"
-          :key="item.title"
+          v-for="item in users"
+          :key="item.name"
           @click.prevent
         >
           <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
+            <v-list-tile-title v-text="item.name"></v-list-tile-title>
           </v-list-tile-content>
           <v-list-tile-action>
-            <v-icon :color="item.id === 2 ? 'success' : 'grey'">
+            <v-icon :color="item.id === user.id ? 'success' : 'grey'">
               chat_bubble
             </v-icon>
           </v-list-tile-action>
@@ -52,38 +52,16 @@
 import { mapState, mapMutations } from 'vuex';
 export default {
   data: () => ({
-    drawer: false,
-    recent: [
-      {
-        id: 1,
-        active: true,
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
-        title: 'Jason Oner',
-      },
-      {
-        id: 2,
-        active: true,
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-        title: 'Mike Carlson',
-      },
-      {
-        id: 3,
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg',
-        title: 'Cindy Baker',
-      },
-      {
-        id: 4,
-        avatar: 'https://cdn.vuetifyjs.com/images/lists/4.jpg',
-        title: 'Ali Connors',
-      },
-    ]
+    drawer: false
   }),
-  computed: mapState(['user']),
+  computed: mapState(['user', 'users']),
   methods: {
     ...mapMutations(['logout']),
     exit () {
-      this.$router.push('/?message=logout');
-      this.logout();
+      this.$socket.emit('userLeft', this.user.id, () => {
+        this.$router.push('/?message=logout');
+        this.logout();
+      })
     }
   }
 };

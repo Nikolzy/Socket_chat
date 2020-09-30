@@ -1,7 +1,11 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8>
+  <v-layout column justify-center align-center class="layout_wrapper">
+    <v-flex class="d-flex align-center justify-center">
       <v-card min-width="400px">
+        <v-snackbar v-model="snackbar" :timeout="12000" top>
+          {{ message }}
+          <v-btn color="pink" flat @click="snackbar = false">Close</v-btn>
+        </v-snackbar>
         <v-card-title>
           <h1>Nuxt chat</h1>
         </v-card-title>
@@ -51,8 +55,19 @@ export default {
       console.log('socket connected')
     }
   },
+  mounted () {
+    const { message } = this.$route.query;
+    if (message === 'noUser') {
+      this.message = 'User is not created';
+    } else if (message === 'logout') {
+      this.message = 'Logout';
+    }
+    this.snackbar = !!message;
+  },
   data: () => ({
     valid: true,
+    snackbar: false,
+    message: '',
     name: '',
     room: '',
     mapImage: null,
@@ -84,10 +99,16 @@ export default {
           }
         })
       }
-    },
-    change () {
-      console.log('aedwdw')
     }
   }
 };
 </script>
+
+<style>
+  .layout_wrapper {
+    height: 100%;
+  }
+  .v-snack__wrapper {
+    margin-top: 20px;
+  }
+</style>

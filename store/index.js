@@ -1,5 +1,5 @@
 export const state = () => ({
-  user: null,
+  user: {},
   messages: [],
   users: []
 })
